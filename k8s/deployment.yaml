@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: taskforce
-          image: Shamil0Xero/taskforce:IMAGE_TAG
+          image: shamil0xero/taskforce:latest
           ports:
             - containerPort: 5000
           readinessProbe:

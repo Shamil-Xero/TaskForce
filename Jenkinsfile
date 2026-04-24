@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_REPO = 'Shamil0Xero/taskforce'
+        DOCKER_HUB_REPO = 'shamil0xero/taskforce'
         DOCKER_HUB_CREDENTIALS = 'dockerhub-credentials'
     }
 
