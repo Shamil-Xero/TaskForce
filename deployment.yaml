@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taskforce
+  labels:
+    app: taskforce
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: taskforce
+  template:
+    metadata:
+      labels:
+        app: taskforce
+    spec:
+      containers:
+        - name: taskforce
+          image: Shamil0Xero/taskforce:IMAGE_TAG
+          ports:
+            - containerPort: 5000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 20
