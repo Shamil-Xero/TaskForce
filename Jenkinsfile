@@ -56,8 +56,8 @@ pipeline {
             steps {
                 echo 'Deploying to Kubernetes...'
                 
-                // Copy the read-only mounted kubeconfig and safely convert Windows paths using Python
-                sh "python3 -c \"text=open('/root/.kube/config').read().replace(chr(92), '/').replace('C:', '/C:'); open('/tmp/kubeconfig','w').write(text)\""
+                // Copy the read-only mounted kubeconfig and safely convert Windows paths and Localhost resolving using Python
+                sh "python3 -c \"text=open('/root/.kube/config').read().replace(chr(92), '/').replace('C:', '/C:').replace('127.0.0.1', 'host.docker.internal'); open('/tmp/kubeconfig','w').write(text)\""
 
                 sh "sed -i 's|IMAGE_TAG|${BUILD_NUMBER}|g' k8s/deployment.yaml"
                 sh 'KUBECONFIG=/tmp/kubeconfig kubectl apply -f k8s/deployment.yaml'
