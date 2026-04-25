@@ -56,11 +56,8 @@ pipeline {
             steps {
                 echo 'Deploying to Kubernetes...'
                 
-                // Copy the read-only mounted kubeconfig to safely edit
-                sh 'cp /root/.kube/config /tmp/kubeconfig'
-                // Convert Windows paths (C:\) to absolute Linux paths (/C:/) and fix slashes
-                sh "sed -i 's|C:\\\\\\\\|/C:/|g' /tmp/kubeconfig || true"
-                sh "sed -i 's|\\\\\\\\|/|g' /tmp/kubeconfig || true"
+                // Copy the read-only mounted kubeconfig and safely convert Windows paths using Python
+                sh "python3 -c \"text=open('/root/.kube/config').read().replace(chr(92), '/').replace('C:', '/C:'); open('/tmp/kubeconfig','w').write(text)\""
 
                 sh "sed -i 's|IMAGE_TAG|${BUILD_NUMBER}|g' k8s/deployment.yaml"
                 sh 'KUBECONFIG=/tmp/kubeconfig kubectl apply -f k8s/deployment.yaml'
