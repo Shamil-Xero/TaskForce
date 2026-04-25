@@ -27,4 +27,7 @@ RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/s
 # Ensure python points to python3
 RUN ln -s /usr/bin/python3 /usr/bin/python || true
 
+# Symlink to fix kubeconfig executing with Windows paths inside Linux container
+RUN mkdir -p /C:/Users/Shamil && ln -s /root/.minikube /C:/Users/Shamil/.minikube
+
 USER jenkins

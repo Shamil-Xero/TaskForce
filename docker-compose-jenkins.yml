@@ -17,8 +17,9 @@ services:
       - //var/run/docker.sock:/var/run/docker.sock
       # Mount the kubeconfig and minikube certificates so Jenkins can authenticate to your Minikube cluster
       # Note: ${USERPROFILE} handles Windows user directories correctly
-      - ${USERPROFILE}/.kube:/root/.kube:ro
-      - ${USERPROFILE}/.minikube:${USERPROFILE}/.minikube:ro
+      - ~/.kube:/root/.kube:ro
+      - ~/.minikube:/root/.minikube:ro
+
 
 volumes:
   jenkins_home:
