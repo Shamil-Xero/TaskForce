@@ -60,9 +60,9 @@ pipeline {
                 sh "python3 -c \"text=open('/root/.kube/config').read().replace(chr(92), '/').replace('C:', '/C:').replace('127.0.0.1', 'host.docker.internal'); open('/tmp/kubeconfig','w').write(text)\""
 
                 sh "sed -i 's|IMAGE_TAG|${BUILD_NUMBER}|g' k8s/deployment.yaml"
-                sh 'KUBECONFIG=/tmp/kubeconfig kubectl apply -f k8s/deployment.yaml'
-                sh 'KUBECONFIG=/tmp/kubeconfig kubectl apply -f k8s/service.yaml'
-                sh 'KUBECONFIG=/tmp/kubeconfig kubectl rollout status deployment/taskforce'
+                sh 'KUBECONFIG=/tmp/kubeconfig kubectl apply -f k8s/deployment.yaml --insecure-skip-tls-verify=true'
+                sh 'KUBECONFIG=/tmp/kubeconfig kubectl apply -f k8s/service.yaml --insecure-skip-tls-verify=true'
+                sh 'KUBECONFIG=/tmp/kubeconfig kubectl rollout status deployment/taskforce --insecure-skip-tls-verify=true'
             }
         }
 
