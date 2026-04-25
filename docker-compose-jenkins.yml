@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  jenkins:
+    build:
+      context: .
+      dockerfile: Dockerfile.jenkins
+    container_name: jenkins_custom
+    # Running Jenkins as root so it has permission to use the Docker socket and read Minikube configs from the host
+    user: root
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      # Mount the Docker Socket from your Windows host to the container (Docker-in-Docker behavior)
+      - //var/run/docker.sock:/var/run/docker.sock
+      # Mount the kubeconfig and minikube certificates so Jenkins can authenticate to your Minikube cluster
+      # Note: ${USERPROFILE} handles Windows user directories correctly
+      - ${USERPROFILE}/.kube:/root/.kube:ro
+      - ${USERPROFILE}/.minikube:${USERPROFILE}/.minikube:ro
+
+volumes:
+  jenkins_home:
