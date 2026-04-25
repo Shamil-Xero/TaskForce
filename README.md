@@ -69,8 +69,22 @@ docker-compose -f docker-compose-jenkins.yml up -d --build
 4. Branch Specifier: `*/main`
 5. Click **Save** and hit **Build Now** to verify the end-to-end integration!
 
-### 5. Verify the Kubernetes Deployment
-Once Jenkins finishes building and pushing the updated tag to your cluster, verify it using:
+### 5. Setup Automatic GitHub Webhook Triggers
+To complete the "End-to-End Workflow" for 100% automation, Jenkins needs to automatically trigger when you type `git push`:
+1. **Expose your Local Jenkins**: Since Jenkins is running on `localhost:8080`, GitHub cannot see it. Download and run [ngrok](https://ngrok.com/) on your Windows machine:
+   ```powershell
+   ngrok http 8080
+   ```
+2. **Configure Jenkins**: In Jenkins, go to your `TaskForce` Pipeline configuration. Scroll to **Build Triggers** and check the box that says **"GitHub hook trigger for GITScm polling"**.
+3. **Configure GitHub**:
+   - Go to your GitHub Repository -> **Settings** -> **Webhooks** -> **Add webhook**.
+   - **Payload URL**: Input your `ngrok` URL followed by `/github-webhook/` *(e.g., `https://1234abcd.ngrok-free.app/github-webhook/`)*. Ensure you include the trailing slash!
+   - **Content type**: `application/json`.
+   - **Events**: "Just the push event".
+   - Click **Add webhook**.
+
+### 6. Verify the Kubernetes Deployment
+Once Jenkins finishes building and pushing the updated tag to your cluster natively from a GitHub Push, verify it using:
 ```bash
 kubectl get pods
 minikube service taskforce-service --url
@@ -82,8 +96,8 @@ minikube service taskforce-service --url
 # Get all tasks
 curl http://localhost:5000/tasks
 
-# Create a task
-curl -X POST http://localhost:5000/tasks \
-  -H "Content-Type: application/json" \
-  -d '{"title": "Learn Kubernetes"}'
+# Create a task (Windows Command Prompt Syntax)
+curl -X POST http://localhost:5000/tasks ^
+  -H "Content-Type: application/json" ^
+  -d "{\"title\": \"Learn Kubernetes\"}"
 ```

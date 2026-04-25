@@ -1,6 +1,10 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static', static_folder='static')
+
+@app.route('/')
+def serve_frontend():
+    return send_from_directory('static', 'index.html')
 
 # In-memory storage
 tasks = []
