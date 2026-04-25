@@ -55,10 +55,17 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 echo 'Deploying to Kubernetes...'
+                
+                // Copy the read-only mounted kubeconfig to safely edit
+                sh 'cp /root/.kube/config /tmp/kubeconfig'
+                // Convert Windows paths (C:\) to absolute Linux paths (/C:/) and fix slashes
+                sh "sed -i 's|C:\\\\\\\\|/C:/|g' /tmp/kubeconfig || true"
+                sh "sed -i 's|\\\\\\\\|/|g' /tmp/kubeconfig || true"
+
                 sh "sed -i 's|IMAGE_TAG|${BUILD_NUMBER}|g' k8s/deployment.yaml"
-                sh 'kubectl apply -f k8s/deployment.yaml'
-                sh 'kubectl apply -f k8s/service.yaml'
-                sh 'kubectl rollout status deployment/taskforce'
+                sh 'KUBECONFIG=/tmp/kubeconfig kubectl apply -f k8s/deployment.yaml'
+                sh 'KUBECONFIG=/tmp/kubeconfig kubectl apply -f k8s/service.yaml'
+                sh 'KUBECONFIG=/tmp/kubeconfig kubectl rollout status deployment/taskforce'
             }
         }
 
